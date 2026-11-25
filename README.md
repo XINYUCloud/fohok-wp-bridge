@@ -75,6 +75,12 @@ APP 登录时填写站点地址，选择「连接密钥」（需插件）或「�
 - 所有写操作仍在 WordPress 侧做 capability 校验，APP 不绕过权限模型。
 - CORS 仅在请求带 `X-FOHOK-App` 头时放行，允许来源可在插件设置页限制。
 
+## 已知限制
+
+- 未安装插件时，原生 WebView 中的跨域请求可能受 WordPress 默认 CORS 策略限制；安装插件后由插件放行 `X-FOHOK-App` 请求并允许配置来源。
+- 更新/安装/删除插件与主题依赖服务器 `WP_Filesystem` 权限；执行前请备份站点。
+- 小工具支持侧边栏排序与移除；单个小工具实例的表单字段因各插件自定义结构不同，暂未做通用表单。
+
 ## 发行
 
 详见 [docs/RELEASE.md](docs/RELEASE.md)。推送 `plugin-v*` 标签只发行插件，推送 `app-v*` 标签只发行 APP。
