@@ -1,0 +1,48 @@
+name: Release App
+
+on:
+  push:
+    tags:
+      - 'app-v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+
+      - name: Install dependencies
+        working-directory: app
+        run: npm ci --no-audit --no-fund
+
+      - name: Build web bundle
+        working-directory: app
+        run: npm run build
+
+      - name: Extract version
+        id: ver
+        run: echo "version=${GITHUB_REF_NAME#app-v}" >> "$GITHUB_OUTPUT"
+
+      - name: Package web bundle
+        run: |
+          cd app/dist
+          zip -r "../../fohok-app-${{ steps.ver.outputs.version }}-web.zip" .
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: fohok-app-*.zip
+          generate_release_notes: true
+          body: |
+            FOHOK WP Bridge APP ${GITHUB_REF_NAME}
+            包含可直接部署/PWA 安装的 Web 产物；原生包请用 Capacitor 同步后由 Android Studio / Xcode 构建。
+            插件版本请使用 plugin-v* 标签。
