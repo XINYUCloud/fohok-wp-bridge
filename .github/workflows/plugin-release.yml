@@ -1,0 +1,36 @@
+name: Release Plugin
+
+on:
+  push:
+    tags:
+      - 'plugin-v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Extract version
+        id: ver
+        run: echo "version=${GITHUB_REF_NAME#plugin-v}" >> "$GITHUB_OUTPUT"
+
+      - name: Package plugin
+        run: |
+          mkdir -p build/fohok-bridge
+          cp -R plugin/. build/fohok-bridge/
+          cd build
+          zip -r "../fohok-bridge-${{ steps.ver.outputs.version }}.zip" fohok-bridge
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: fohok-bridge-*.zip
+          generate_release_notes: true
+          body: |
+            FOHOK Bridge 插件 ${GITHUB_REF_NAME}
+            安装：上传 zip 到 WordPress 后台插件页。
+            客户端与插件独立发行，APP 版本请使用 app-v* 标签。
