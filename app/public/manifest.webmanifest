@@ -1,0 +1,13 @@
+{
+  "name": "FOHOK WP Bridge",
+  "short_name": "WP Bridge",
+  "description": "开源 WordPress 全功能移动客户端",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f5f7f8",
+  "theme_color": "#0f766e",
+  "icons": [
+    { "src": "./icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
